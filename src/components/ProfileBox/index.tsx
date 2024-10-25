@@ -56,7 +56,7 @@ const ProfileBox = () => {
           <div className="relative z-30 mx-auto -mt-22 h-30 w-full max-w-30 rounded-full bg-white/20 p-1 backdrop-blur sm:h-44 sm:max-w-[176px] sm:p-3">
             <div className="relative drop-shadow-2">
               <Image
-                src="/images/user/user-22.png"
+                src="/images/user/user-28.png"
                 width={160}
                 height={160}
                 className="overflow-hidden rounded-full"
@@ -102,10 +102,10 @@ const ProfileBox = () => {
               <a href="mailto:user@xyz.com" className="flex flex-col items-center hover:text-blue-600 cursor-pointer border-r hover:underline justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
                 user@xyz.com
               </a>
-              <a href="mailto:user@xyz.com" className="flex flex-col items-center hover:text-blue-600 cursor-pointer border-r hover:underline justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
+              <a className="flex flex-col items-center border-r justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
                 +91 242 4245 242
               </a>
-              <a href="mailto:user@xyz.com" className="flex flex-col items-center hover:text-blue-600 cursor-pointer border-r hover:underline justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
+              <a className="flex flex-col items-center border-r justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
                 Meter ID: 53985398
               </a>
             </div>

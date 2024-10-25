@@ -17,7 +17,7 @@ const DropdownUser = () => {
           <Image
             width={112}
             height={112}
-            src="/images/user/user-22.png"
+            src="/images/user/user-28.png"
             style={{
               width: "auto",
               height: "auto",
@@ -58,7 +58,7 @@ const DropdownUser = () => {
               <Image
                 width={112}
                 height={112}
-                src="/images/user/user-03.png"
+                src="/images/user/user-28.png"
                 style={{
                   width: "auto",
                   height: "auto",
@@ -72,10 +72,10 @@ const DropdownUser = () => {
 
             <span className="block">
               <span className="block font-medium text-dark dark:text-white">
-                Ram Prasad
+                User
               </span>
               <span className="block font-medium text-dark-5 dark:text-dark-6">
-                jonson@nextadmin.com
+                user@xyz.com
               </span>
             </span>
           </div>
@@ -110,7 +110,7 @@ const DropdownUser = () => {
               </Link>
             </li>
 
-            <li>
+            {/* <li>
               <Link
                 href="/pages/settings"
                 className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base"
@@ -138,7 +138,7 @@ const DropdownUser = () => {
                 </svg>
                 Account Settings
               </Link>
-            </li>
+            </li> */}
           </ul>
           <div className="p-2.5">
             <button className="flex w-full items-center gap-2.5 rounded-[7px] p-2.5 text-sm font-medium text-dark-4 duration-300 ease-in-out hover:bg-gray-2 hover:text-dark dark:text-dark-6 dark:hover:bg-dark-3 dark:hover:text-white lg:text-base">
