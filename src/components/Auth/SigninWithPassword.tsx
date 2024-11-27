@@ -103,12 +103,12 @@ export default function SigninWithPassword() {
             Remember me
           </label>
         </div>
-        <Link
-          href="/auth-signup"
+        {/* <Link
+          href="/forgot-password"
           className="text-sm text-primary hover:text-primary-dark"
         >
-          Create Account?
-        </Link>
+          Forgot password?
+        </Link> */}
       </div>
 
       <button
