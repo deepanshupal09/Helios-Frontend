@@ -18,7 +18,7 @@ export const loginUser = async (email: string, password: string) => {
     return await res.json();
 };
 
-export async function signupUser(body: { email: string; password: string, provider_id:string,name:string,battery:string,battery_capacity:string, phone:string}) {
+export async function signupUser(body: { email: string; password: string, provider_id:string,name:string,battery:number,battery_capacity:number, phone:string}) {
     const res = await fetch(`${process.env.BACKEND_URL}/api/auth/register`, {
         method: "POST",
         headers: {
