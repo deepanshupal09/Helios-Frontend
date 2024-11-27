@@ -1,19 +1,27 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
+import { loginUser } from "../../../actions/api"; 
 
 export default function SigninWithPassword() {
   const [email, setEmail] = useState(""); 
   const [password, setPassword] = useState(""); 
   const [remember, setRemember] = useState(false); 
   const router = useRouter(); 
-  const handleSubmit = (e:any) => {
-    e.preventDefault(); 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
     if (email && password) {
-      router.push("/"); 
-    } else {
-      console.log("Please fill out the form correctly.");
+      try {
+        const userData = await loginUser(email, password);
+        if (userData.success) {
+          router.push("/");
+        } else {
+          console.log("Login failed");
+        }
+      } catch (err) {
+        console.error("Error logging in:", err);
+      }
     }
   };
 
@@ -69,7 +77,7 @@ export default function SigninWithPassword() {
             placeholder="Enter your password"
             name="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)} // Update password state
+            onChange={(e) => setPassword(e.target.value)} 
             className="w-full rounded-lg border border-stroke bg-transparent py-[15px] pl-6 pr-11 font-medium text-dark outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
           />
         </div>
@@ -91,12 +99,12 @@ export default function SigninWithPassword() {
             Remember me
           </label>
         </div>
-        <Link
+        {/* <Link
           href="/forgot-password"
           className="text-sm text-primary hover:text-primary-dark"
         >
           Forgot password?
-        </Link>
+        </Link> */}
       </div>
 
       <button
