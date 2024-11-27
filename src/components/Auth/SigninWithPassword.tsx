@@ -2,7 +2,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { loginUser } from "../../../actions/api"; 
+import { loginUser } from "../../../actions/api";
+import { getAuth, setAuth } from "../../../actions/cookie"; 
 
 export default function SigninWithPassword() {
   const [email, setEmail] = useState(""); 
@@ -14,7 +15,10 @@ export default function SigninWithPassword() {
     if (email && password) {
       try {
         const userData = await loginUser(email, password);
-        if (userData.success) {
+        console.log(userData);
+        if (userData) {
+          console.log("token",userData.token);
+          await setAuth(userData.token);
           router.push("/");
         } else {
           console.log("Login failed");

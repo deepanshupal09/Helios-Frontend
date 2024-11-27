@@ -15,3 +15,21 @@ export async function setAuth(token: string) {
         httpOnly: true, 
     });
 }
+export async function getSignupCookie() {
+    const cookieStore = cookies();
+    const signup = cookieStore.get('signup');
+    return signup ? signup.value : null; 
+}
+
+export async function setSignupCookie() {
+    cookies().set('signup', 'true', {
+        expires: new Date(Date.now() + 20 * 60 * 1000), 
+        secure: true,
+    });
+}
+export async function deleteAuth() {
+    cookies().set('auth', '', {
+        expires: new Date(Date.now() - 1 * 60 * 60 * 1000), 
+        secure: true,
+    });
+}
