@@ -5,10 +5,7 @@ import { getAuth } from "../../../actions/cookie";
 import { parseJwt } from "../../../actions/utils"; 
 
 const ProfileBox = () => {
-  const [userName, setUserName] = useState("");
-  const [meterId, setMeterId] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState(""); 
+ const [user, setUser]  = useState<UserType | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -17,10 +14,7 @@ const ProfileBox = () => {
       const data = parseJwt(token);
       console.log(data);
       if (data && data.user) {
-        setUserName(data.user.name);
-        setMeterId(data.user.provider_id);
-        setPhone(data.user.phone);
-        setEmail(data.user.email);
+        setUser(data.user);
       }
     };
     fetchData();
@@ -62,18 +56,18 @@ const ProfileBox = () => {
           </div> */}
           <div className="mt-4">
              <h3 className="mb-1 text-heading-6 font-bold text-dark dark:text-white">
-               {userName}
+               {user?.name}
              </h3>
              {/* <p className="font-medium">Ui/Ux Designer</p> */}
              <div className="mx-auto mb-5.5 mt-5 grid  w-fit rounded-[5px] border border-stroke py-[9px] shadow-1 grid-cols-3 dark:border-dark-3 dark:bg-dark-2 dark:shadow-card">
                <a href="mailto:user@xyz.com" className="flex flex-col items-center hover:text-blue-600 cursor-pointer border-r hover:underline justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
-                 {email}
+                 {user?.email}
                </a>
                <a className="flex flex-col items-center border-r justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
-                 {phone}
+                 {user?.phone}
                </a>
                <a className="flex flex-col items-center border-r justify-center gap-1  border-stroke px-4 dark:border-dark-3 xsm:flex-row">
-                 {meterId}
+                 {user?.provider_name}
                </a>
              </div>
              </div>
