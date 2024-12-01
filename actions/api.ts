@@ -36,4 +36,20 @@ export async function signupUser(body: { email: string; password: string, provid
     }
 
     return await res.json();
+
+}
+export async function fetchProviders() {
+    const res = await fetch(`${process.env.BACKEND_URL}/api/auth/fetchProviders`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Something went wrong! Please try again.');
+    }
+
+    return await res.json();
 }

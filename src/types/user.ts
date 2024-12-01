@@ -8,3 +8,8 @@ type UserType = {
     password: string;
     provider_name: string;
 }
+
+type ProviderType = {
+    name: string;
+    provider_id: string;
+}
