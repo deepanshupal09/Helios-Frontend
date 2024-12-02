@@ -53,3 +53,75 @@ export async function fetchProviders() {
 
     return await res.json();
 }
+export async function fetchTariff(email: string, timestamp: string) {
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/dashboard/fetch-tariff`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                timestamp,
+            },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || "Something went wrong! Please try again.");
+        }
+
+        console.log("API Response:", data);
+        return data;
+    } catch (error) {
+        console.error("Fetch Tariff Error:", error);
+        throw error;
+    }
+}
+export async function fetchConsumption(email: string, timestamp: string) {
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/dashboard/fetch-consumption`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                timestamp,
+            },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || "Something went wrong! Please try again.");
+        }
+
+        console.log("API Response:", data);
+        return data;
+    } catch (error) {
+        console.error("Fetch Tariff Error:", error);
+        throw error;
+    }
+}
+export async function fetchSolarOverview(email: string, timestamp: string) {
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/dashboard/fetch-solar`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                timestamp,
+            },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.message || "Something went wrong! Please try again.");
+        }
+
+        console.log("API Response:", data);
+        return data;
+    } catch (error) {
+        console.error("Fetch Tariff Error:", error);
+        throw error;
+    }
+}

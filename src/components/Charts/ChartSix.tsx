@@ -1,25 +1,32 @@
 import { ApexOptions } from "apexcharts";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
+import { fetchSolarOverview } from "../../../actions/api";
+import { getAuth } from "../../../actions/cookie"; 
+import { parseJwt } from "../../../actions/utils"; 
+
+interface SolarData {
+  date: string; 
+  total_power: number;
+}
 
 const ChartOne: React.FC = () => {
-  const series = [
-    {
-      name: "Received Amount",
-      data: [0, 20, 35, 45, 35, 55, 65, 50, 65, 75, 60, 75],
-    },
-    {
-      name: "Due Amount",
-      data: [15, 9, 17, 32, 25, 68, 80, 68, 84, 94, 74, 62],
-    },
-  ];
+  const [series, setSeries] = useState([
+    { name: "Solar Production", data: [] as number[] },
+    { name: "Solar Consumption", data: [] as number[] },
+  ]);
+
+  const [categories, setCategories] = useState<string[]>([]); 
+  const [user, setUser] = useState<UserType | null>(null);
+  const [averageProduction, setAverageProduction] = useState<number | null>(null);
+  const [averageConsumption, setAverageConsumption] = useState<number | null>(null);
 
   const options: ApexOptions = {
     legend: {
-      show: false,
+      show: true,
       position: "top",
-      horizontalAlign: "left",
+      horizontalAlign: "right",
     },
     colors: ["#5750F1", "#0ABEF9"],
     chart: {
@@ -57,9 +64,15 @@ const ChartOne: React.FC = () => {
     stroke: {
       curve: "smooth",
     },
-
     markers: {
-      size: 0,
+      size: 3, 
+      colors: ["#5750F1", "#0ABEF9"], 
+      // strokeColor: "#fff", 
+      strokeWidth: 2, 
+      shape: "circle", 
+      hover: {
+        size: 5, 
+      },
     },
     grid: {
       strokeDashArray: 5,
@@ -79,38 +92,25 @@ const ChartOne: React.FC = () => {
     },
     tooltip: {
       fixed: {
-        enabled: !1,
+        enabled: false,
       },
       x: {
-        show: !1,
+        show: false,
       },
       y: {
         title: {
-          formatter: function (e) {
+          formatter: function () {
             return "";
           },
         },
       },
       marker: {
-        show: !1,
+        show: true,
       },
     },
     xaxis: {
       type: "category",
-      categories: [
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-      ],
+      categories: categories, 
       axisBorder: {
         show: false,
       },
@@ -124,8 +124,61 @@ const ChartOne: React.FC = () => {
           fontSize: "0px",
         },
       },
+      labels: {
+        formatter: function (value) {
+          return value.toFixed(0)+"W"; 
+        },
+      },
     },
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await getAuth();
+        const data = parseJwt(token);
+    
+        if (data && data.user) {
+          setUser(data.user);
+    
+          const email = "abcd@gmail.com"; 
+          const nowUTC = new Date();
+          const istOffset = 5.5 * 60 * 60 * 1000; 
+          const nowIST = new Date(nowUTC.getTime() + istOffset);
+          const timestamp = '2024-12-06';
+    
+          const tariffData = await fetchSolarOverview(email, timestamp);
+          console.log("solar API Response:", tariffData);
+    
+          if (tariffData) {
+            const { solar_consumption, solar_production } = tariffData;
+    
+            const formattedDates = solar_production.map((entry: SolarData) => {
+              const date = new Date(entry.date);
+              return `${date.getDate()} ${date.toLocaleString("en-US", { month: "short" })}`;
+            });
+            const productionData = solar_production.map((entry: SolarData) => entry.total_power);
+            const consumptionData = solar_consumption.map((entry: SolarData) => entry.total_power);
+            
+            const avgProduction = (productionData.reduce((acc: number, val: number) => acc + val, 0) / productionData.length).toFixed(2);
+            const avgConsumption = (consumptionData.reduce((acc: number, val: number) => acc + val, 0) / consumptionData.length).toFixed(2);
+
+            setSeries([
+              { name: "Solar Production", data: productionData },
+              { name: "Solar Consumption", data: consumptionData },
+            ]);
+            setAverageProduction(parseFloat(avgProduction));
+            setAverageConsumption(parseFloat(avgConsumption));
+            setCategories(formattedDates); 
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching tariff data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
@@ -135,12 +188,12 @@ const ChartOne: React.FC = () => {
             Solar Energy Overview
           </h4>
         </div>
-        <div className="flex items-center gap-2.5">
+        {/* <div className="flex items-center gap-2.5">
           <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
           </p>
           <DefaultSelectOption options={["", "Yearly"]} />
-        </div>
+        </div> */}
       </div>
       <div>
         <div className="-ml-4 -mr-5">
@@ -155,15 +208,17 @@ const ChartOne: React.FC = () => {
 
       <div className="flex flex-col mt-10 gap-2 text-center xsm:flex-row xsm:gap-0">
         <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
-          <p className="font-medium">Energy Used</p>
+          <p className="font-medium">Average Solar Energy Produced</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-          ₹4,507.00
+          {/* ₹4,507.00 */}
+          {averageProduction} W
           </h4>
         </div>
         <div className="xsm:w-1/2">
-          <p className="font-medium">Energy Sold</p>
+          <p className="font-medium">Average Solar Energy Consumed</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-          ₹3,240.00
+          {/* ₹3,240.00 */}
+          {averageConsumption} W
           </h4>
         </div>
       </div>

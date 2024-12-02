@@ -1,25 +1,27 @@
 import { ApexOptions } from "apexcharts";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
+import { getAuth } from "../../../actions/cookie";
+import { parseJwt } from "../../../actions/utils";
+import { fetchTariff } from "../../../actions/api";
 
 const ChartOne: React.FC = () => {
-  const series = [
-    {
-      name: "Current Rate",
-      data: [0, 2.0, 3.5, 4.5, 3.5, 5.5, 6.5, 5.0, 6.5, 7.5, 6.0, 7.5],
-    },
-    {
-      name: "Forecasted Rate",
-      data: [1.5, 0.9, 1.7, 3.2, 2.5, 6.8, 8.0, 6.8, 8.4, 9.4, 7.4, 6.2],
-    },
-  ];
+  const [categories, setCategories] = useState<string[]>([]);
+  const [forecastRates, setForecastRates] = useState<number[]>([]);
+  const [currPrice, setCurrPrice] = useState<number | null>(null);
+  const [prePrice, setPrePrice] = useState<number | null>(null);
 
+  const [series, setSeries] = useState([
+    { name: "Current Rate", data: [] },
+    { name: "Forecasted Rate", data: [] },
+  ]);
+  
   const options: ApexOptions = {
     legend: {
-      show: false,
+      show: true,
       position: "top",
-      horizontalAlign: "left",
+      horizontalAlign: "right",
     },
     colors: ["#5750F1", "#0ABEF9"],
     chart: {
@@ -57,16 +59,24 @@ const ChartOne: React.FC = () => {
     stroke: {
       curve: "smooth",
     },
-
     markers: {
-      size: 0,
+      size: 4, 
+      colors: ["#5750F1", "#0ABEF9"], 
+      // strokeColor: "#fff", 
+      strokeWidth: 2, 
+      shape: "circle", 
+      hover: {
+        size: 10, 
+      },
     },
+    
     grid: {
       strokeDashArray: 5,
       xaxis: {
         lines: {
           show: false,
         },
+        
       },
       yaxis: {
         lines: {
@@ -79,38 +89,25 @@ const ChartOne: React.FC = () => {
     },
     tooltip: {
       fixed: {
-        enabled: !1,
+        enabled: false,
       },
       x: {
-        show: !1,
+        show: false,
       },
       y: {
         title: {
-          formatter: function (e) {
+          formatter: function () {
             return "";
           },
         },
       },
       marker: {
-        show: !1,
+        show: false,
       },
     },
     xaxis: {
       type: "category",
-      categories: [
-        "12 AM",
-        "2 AM",
-        "4 AM",
-        "6 AM",
-        "8 AM",
-        "10 AM",
-        "12 PM",
-        "2 PM",
-        "4 PM",
-        "6 PM",
-        "8 PM",
-        "10 PM",
-      ],
+      categories: categories,
       axisBorder: {
         show: false,
       },
@@ -126,20 +123,118 @@ const ChartOne: React.FC = () => {
       },
     },
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await getAuth();
+        const data = parseJwt(token);
+  
+        if (data && data.user) {
+          const email = data.user.email;
+          const nowUTC = new Date();
+          const istOffset = 5.5 * 60 * 60 * 1000;
+          const nowIST = new Date(nowUTC.getTime()+istOffset);
+          
+          const hours = nowIST.getHours();
+          let roundedHour = hours;
+          if (nowIST.getMinutes() >= 30) {
+            roundedHour += 1; 
+          }
+          if (roundedHour === 24) {
+            roundedHour = 0;
+          }
+          nowIST.setHours(roundedHour, 0, 0, 0);
+
+          const timestampUTC = new Date(nowIST.getTime() - istOffset); 
+          const timestamp = timestampUTC.toISOString();
+          console.log(timestamp);
+          const tariffData = await fetchTariff(email, timestamp);
+  
+          if (tariffData) {
+            const forecastTariff = tariffData.forecast_tariff || [];
+            const actualTariff = tariffData.actual_tariff || [];
+  
+            const formattedHours = forecastTariff.map((item: any) => {
+              const hourString = item.datetime.substring(11, 13);
+              const hour = parseInt(hourString, 10);
+              const period = hour >= 12 ? "PM" : "AM";
+              const formattedHour = hour % 12 || 12;
+              return `${formattedHour} ${period}`;
+            });
+  
+            setCategories(formattedHours);
+
+            const lastActualTariff = actualTariff[actualTariff.length - 1];
+            const { timestamp: lastTimestamp, rate: lastActualRate } =
+              lastActualTariff;
+              setCurrPrice(lastActualRate ? Number((lastActualRate*12).toFixed(2)):null);
+            const matchingForecast = forecastTariff.find(
+              (item: any) => item.datetime === lastTimestamp
+            );
+
+            const matchingForecastRate = matchingForecast
+              ? matchingForecast.forecast_rate
+              : null;
+              setPrePrice(matchingForecastRate ? Number((matchingForecastRate * 12).toFixed(2)) : null);
+            // console.log("Last Actual Rate:", lastActualRate);
+            // console.log("Matching Forecast Rate:", matchingForecastRate);
+  
+            const forecastRates = forecastTariff.map(
+              (item: any) => parseFloat(item.forecast_rate.toFixed(4))
+            );
+
+            const forecastHourToIndex: { [key: string]: number } = {};
+            formattedHours.forEach((hour:string, index:number) => {
+              forecastHourToIndex[hour] = index;
+            });
+  
+            const actualRates = new Array(formattedHours.length).fill(null);
+            actualTariff.forEach((item: any) => {
+              const hourString = item.timestamp.substring(11, 13);
+              const hour = parseInt(hourString, 10);
+              const period = hour >= 12 ? "PM" : "AM";
+              const formattedHour = hour % 12 || 12;
+              const formattedTime = `${formattedHour} ${period}`;
+  
+              const index = forecastHourToIndex[formattedTime];
+              if (index !== undefined) {
+                actualRates[index] = parseFloat(item.rate.toFixed(4));
+              }
+            });
+            setSeries([
+              {
+                name: "Current Rate",
+                data: actualRates,
+              },
+              {
+                name: "Forecasted Rate",
+                data: forecastRates,
+              },
+            ]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching tariff data:", error);
+      }
+    };
+  
+    fetchData();
+  }, []);
+  
 
   return (
     <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
       <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Electricity Tariff Rate 
+            Electricity Tariff Rate
           </h4>
         </div>
         <div className="flex items-center gap-2.5">
           <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
           </p>
-          <DefaultSelectOption options={["Hourly", "Weekly"]} />
+          <DefaultSelectOption options={["Hourly"]} />
         </div>
       </div>
       <div>
@@ -157,13 +252,13 @@ const ChartOne: React.FC = () => {
         <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
           <p className="font-medium">Current Rate</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            ₹5/kWhr
+            ₹{currPrice}/kWhr
           </h4>
         </div>
         <div className="xsm:w-1/2">
           <p className="font-medium">Forecasted Rate</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-          ₹6/kWhr
+            ₹{prePrice}/kWhr
           </h4>
         </div>
       </div>

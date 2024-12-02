@@ -1,5 +1,6 @@
 import React from "react";
 import { dataStats } from "@/types/dataStats";
+import { fetchConsumption } from "../../../actions/api";
 
 const dataStatsList = [
   {
