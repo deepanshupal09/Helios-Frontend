@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { dataStats } from "@/types/dataStats";
+import { fetchWeather } from "../../../actions/api";
 
 const dataStatsList = [
   {
@@ -120,6 +121,15 @@ const dataStatsList = [
 
 const DataStatsOne: React.FC<dataStats> = () => {
   const [colorMode, setColorMode] = useState("light");
+  const [weatherData, setWeatherData] = useState<{min: string, max: string, curr: string}|null>(null)
+  useEffect(() => {
+    fetchWeather().then((res:any)=>{
+      console.log("res ", res)
+      setWeatherData({curr: (res.main.temp_min - 273.15).toFixed(1), min: (res.main.temp_min - 273.15).toFixed(1), max: (res.main.temp_max - 273.15).toFixed(1)})
+    }).catch(error=>{
+      console.log("Error fetching weather, ", error)
+    })
+  },[])
   return (
     <>
       <div className=" col-start-10 row-span-2 flex w-[350px] flex-col gap-4 md:gap-6 2xl:gap-7.5">
@@ -222,19 +232,19 @@ const DataStatsOne: React.FC<dataStats> = () => {
           <div className="mt-6 flex items-end justify-between">
             <div>
               <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                18°C
+                {weatherData?.min}°C
               </h4>
               <span className="text-body-sm font-medium">Min</span>
             </div>
             <div>
               <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                25°C
+                {weatherData?.curr}°C
               </h4>
               <span className="text-body-sm font-medium">Temp.</span>
             </div>
             <div>
               <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                35°C
+                {weatherData?.max}°C
               </h4>
               <span className="text-body-sm font-medium">Max</span>
             </div>

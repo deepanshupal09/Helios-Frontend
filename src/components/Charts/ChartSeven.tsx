@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { fetchSolarProduction } from "../../../actions/api";
 import { getAuth } from "../../../actions/cookie";
 import { parseJwt } from "../../../actions/utils";
+import SelectOption from "../SelectOption/SelectOption";
 
 const ReactApexChart = dynamic(() => import("react-apexcharts"), {
   ssr: false,
@@ -22,13 +23,14 @@ const ChartOne: React.FC = () => {
   const optionsSolar = ["Hourly", "Weekly"];
   const [selectedOption, setSelectedOption] = useState<string>(optionsSolar[0]);
 
+
   const options: ApexOptions = {
     legend: {
       show: false,
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#5750F1"],
+    colors: ["#5750F1", "#5750F1"],
     chart: {
       fontFamily: "Satoshi, sans-serif",
       height: 310,
@@ -63,13 +65,12 @@ const ChartOne: React.FC = () => {
     ],
     stroke: {
       curve: "smooth",
-      dashArray: series[0]?.dashArray || 0,  // Apply the stored dashArray to the series
-
+      width: [2, 2], // Different widths for solid and dotted lines
+      dashArray: [0, 5], // Solid line for main series, dashed line for last points
     },
     markers: {
       size: 4,
       colors: ["#5750F1"],
-      // strokeColor: "#fff",
       strokeWidth: 2,
       shape: "circle",
       hover: {
@@ -102,8 +103,8 @@ const ChartOne: React.FC = () => {
       },
       y: {
         title: {
-          formatter: function () {
-            return "Produced";
+          formatter: function (value) {
+            return `${value}`;
           },
         },
       },
@@ -129,6 +130,7 @@ const ChartOne: React.FC = () => {
       },
     },
   };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -162,21 +164,24 @@ const ChartOne: React.FC = () => {
 
             setCategories(res.map((entry: SolarProduction) => formatTime(entry.timestamp)));
 
-            const mainSeries = transformedData.slice(0, transformedData.length - 3); // Exclude the last 3 entries
-            const dottedSeries = transformedData.slice(-3); // Last 3 entries
+            // const mainSeries = transformedData.slice(0, transformedData.length); // Exclude the last 3 entries
+         
+          const solidSeries = transformedData.map((point:{x: string, y: number}, index: number) => ({
+            x: point.x,
+            y: index < transformedData.length - 3 ? point.y : null, // Null for last 3 points
+          }));
 
-            // Add the main series and the dotted line series
-            setSeries([
-              { name: "Total Power", data: mainSeries.map((d: any) => d.y) },
-              {
-                name: "Last 3 Entries",
-                data: dottedSeries.map((d: any) => d.y),
-                stroke: {
-                  dashArray: 5, // Make the line dotted
-                },
-              },
-            ]);
-            setSolarData(res);
+          const dottedSeries = transformedData.map((point:{x: string, y: number}, index: number) => ({
+            x: point.x,
+            y: index >= transformedData.length - 4 ? point.y : null, // Null for others
+          }));
+
+          setSeries([
+            { name: "Generated", data: solidSeries },
+            { name: "Predicted", data: dottedSeries },
+          ]);
+
+          setSolarData(res);
           } else {
             // Handle Weekly Data
             const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -187,10 +192,21 @@ const ChartOne: React.FC = () => {
             }));
 
             setCategories(res.map((entry: any) => daysOfWeek[(new Date(entry.date)).getUTCDay()]));
-
+            const solidSeries = transformedData.map((point:{x: string, y: number}, index: number) => ({
+              x: point.x,
+              y: index < transformedData.length - 3 ? point.y : null, // Null for last 3 points
+            }));
+  
+            const dottedSeries = transformedData.map((point:{x: string, y: number}, index: number) => ({
+              x: point.x,
+              y: index >= transformedData.length - 4 ? point.y : null, // Null for others
+            }));
+  
             setSeries([
-              { name: "Total Power", data: transformedData.map((d: any) => d.y) },
+              { name: "Generated", data: solidSeries },
+              { name: "Predicted", data: dottedSeries },
             ]);
+  
             setSolarData(res);
           }
         }
@@ -230,7 +246,7 @@ const ChartOne: React.FC = () => {
           <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
           </p>
-          <DefaultSelectOption
+          <SelectOption
             options={optionsSolar}
             selectedOption={selectedOption}
             setSelectedOption={setSelectedOption}
@@ -244,6 +260,7 @@ const ChartOne: React.FC = () => {
             series={series}
             type="area"
             height={310}
+            width={"100%"}
           />
         </div>
       </div>
