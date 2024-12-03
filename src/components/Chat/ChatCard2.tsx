@@ -198,6 +198,65 @@ const ChatCard = () => {
           </Link>
         ))}
       </div>
+      {/* Global Duration Modal */}
+      {showGlobalModal && (
+        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-md shadow-md">
+            <h4 className="text-lg font-bold">Set Auto Scheduling Duration </h4>
+            <input
+              type="number"
+              placeholder="Enter duration in minutes"
+              value={globalDuration}
+              onChange={(e) => setGlobalDuration(e.target.value)}
+              className="mt-2 p-2 border rounded-md w-full"
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-md"
+                onClick={() => setShowGlobalModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                onClick={handleGlobalDurationSet}
+              >
+                Set
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Child Duration Modal */}
+      {showChildModal.visible && (
+        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-md shadow-md">
+            <h4 className="text-lg font-bold">Set Manual Duration for {chatData[showChildModal.index].name}</h4>
+            <input
+              type="number"
+              placeholder="Enter duration in minutes"
+              value={childDuration}
+              onChange={(e) => setChildDuration(e.target.value)}
+              className="mt-2 p-2 border rounded-md w-full"
+            />
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                className="px-4 py-2 bg-gray-300 rounded-md"
+                onClick={() => setShowChildModal({ index: -1, visible: false })}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                onClick={handleChildDurationSet}
+              >
+                Set
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
