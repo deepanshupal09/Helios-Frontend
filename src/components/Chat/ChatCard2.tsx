@@ -134,7 +134,7 @@ const ChatCard = () => {
               }}
               disabled={disableChildButtons}
             >
-              {childToggles[index]} {childWithTime[index] && "(Timed)"}
+              {childToggles[index]} {childWithTime[index]}
             </button>
 
             <div className="relative h-14 w-14 rounded-full">
