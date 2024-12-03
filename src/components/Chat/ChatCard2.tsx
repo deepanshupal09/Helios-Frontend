@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Chat2 } from "@/types/chat";
+import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 const chatData: Chat2[] = [
   {
@@ -199,64 +200,98 @@ const ChatCard = () => {
         ))}
       </div>
       {/* Global Duration Modal */}
-      {showGlobalModal && (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md shadow-md">
-            <h4 className="text-lg font-bold">Set Auto Scheduling Duration </h4>
-            <input
-              type="number"
-              placeholder="Enter duration in minutes"
-              value={globalDuration}
-              onChange={(e) => setGlobalDuration(e.target.value)}
-              className="mt-2 p-2 border rounded-md w-full"
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                className="px-4 py-2 bg-gray-300 rounded-md"
-                onClick={() => setShowGlobalModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                onClick={handleGlobalDurationSet}
-              >
-                Set
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Child Duration Modal */}
-      {showChildModal.visible && (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md shadow-md">
-            <h4 className="text-lg font-bold">Set Manual Duration for {chatData[showChildModal.index].name}</h4>
-            <input
-              type="number"
-              placeholder="Enter duration in minutes"
-              value={childDuration}
-              onChange={(e) => setChildDuration(e.target.value)}
-              className="mt-2 p-2 border rounded-md w-full"
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                className="px-4 py-2 bg-gray-300 rounded-md"
-                onClick={() => setShowChildModal({ index: -1, visible: false })}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                onClick={handleChildDurationSet}
-              >
-                Set
-              </button>
+      <Dialog
+        open={showGlobalModal}
+        onClose={() => setShowGlobalModal(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 flex w-screen items-center justify-center">
+          <DialogPanel className="max-w-lg gap-2 rounded-lg border-[0.5px]  border-stroke bg-white px-6 pb-5.5  pt-5.5 shadow-default dark:border-dark-3 dark:bg-gray-dark ">
+            <DialogTitle className="text-xl font-bold text-dark dark:text-white">
+              Autoschedule{" "}
+            </DialogTitle>
+            <Description className="mb-7  mt-2 font-medium text-dark-5">
+              Enter duration (in mins)
+            </Description>
+
+            <div className="">
+              <div className="relative mb-6">
+                <input
+                  type="energy"
+                  placeholder={`25`}
+                  name="email"
+                  value={globalDuration}
+                  onChange={(e) => setGlobalDuration(e.target.value)}
+                  className="w-full rounded-lg border border-stroke bg-transparent py-[15px] pl-6 pr-11 font-medium text-dark outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  className="bg-light hover:bg-primary-dark w-full rounded-lg  dark:bg-dark py-3 font-medium bg-gray-2 dark:text-white focus:outline-none"
+                  onClick={() => {
+                    setShowGlobalModal(false);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="hover:bg-primary-dark w-full rounded-lg bg-primary py-3 font-medium text-white focus:outline-none"
+                  onClick={handleGlobalDurationSet}
+                >
+                  Okay
+                </button>
+              </div>
             </div>
-          </div>
+          </DialogPanel>
         </div>
-      )}
+      </Dialog>
+
+<Dialog
+        open={showChildModal.visible}
+        onClose={() => setShowChildModal({ index: -1, visible: false })}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 flex w-screen items-center justify-center">
+          <DialogPanel className="max-w-lg gap-2 rounded-lg border-[0.5px]  border-stroke bg-white px-6 pb-5.5  pt-5.5 shadow-default dark:border-dark-3 dark:bg-gray-dark ">
+            <DialogTitle className="text-xl font-bold text-dark dark:text-white">
+              Autoschedule{" "}
+            </DialogTitle>
+            <Description className="mb-7  mt-2 font-medium text-dark-5">
+              Enter duration (in mins)
+            </Description>
+
+            <div className="">
+              <div className="relative mb-6">
+                <input
+                  type="energy"
+                  placeholder={`25`}
+                  name="email"
+                  value={childDuration}
+                  onChange={(e) => setChildDuration(e.target.value)}
+                  className="w-full rounded-lg border border-stroke bg-transparent py-[15px] pl-6 pr-11 font-medium text-dark outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  className="bg-light hover:bg-primary-dark w-full rounded-lg  dark:bg-dark py-3 font-medium bg-gray-2 dark:text-white focus:outline-none"
+                  onClick={() => {
+                    setShowChildModal({ index: -1, visible: false });
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="hover:bg-primary-dark w-full rounded-lg bg-primary py-3 font-medium text-white focus:outline-none"
+                  onClick={handleChildDurationSet}
+                >
+                  Okay
+                </button>
+              </div>
+            </div>
+          </DialogPanel>
+        </div>
+      </Dialog>
     </div>
   );
 };
