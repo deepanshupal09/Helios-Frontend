@@ -1,19 +1,26 @@
 import { ApexOptions } from "apexcharts";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 import dynamic from "next/dynamic";
+import { fetchSolarProduction } from "../../../actions/api";
+import { getAuth } from "../../../actions/cookie";
+import { parseJwt } from "../../../actions/utils";
 
-const ReactApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
-
+type SolarProduction = {
+  timestamp: string;
+  total_power: number;
+};
 
 const ChartOne: React.FC = () => {
-  const series = [
-    {
-      name: "Current Rate",
-      data: [0, 200, 350, 450, 350, 400, 350, 250, 200, 150, 100, 50],
-    },
-  ];
+  const [solarData, setSolarData] = useState<SolarProduction[]>([]);
+  const [series, setSeries] = useState<any[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const optionsSolar = ["Hourly", "Weekly"];
+  const [selectedOption, setSelectedOption] = useState<string>(optionsSolar[0]);
 
   const options: ApexOptions = {
     legend: {
@@ -21,7 +28,7 @@ const ChartOne: React.FC = () => {
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#5750F1", "#0ABEF9"],
+    colors: ["#5750F1"],
     chart: {
       fontFamily: "Satoshi, sans-serif",
       height: 310,
@@ -56,10 +63,18 @@ const ChartOne: React.FC = () => {
     ],
     stroke: {
       curve: "smooth",
-    },
+      dashArray: series[0]?.dashArray || 0,  // Apply the stored dashArray to the series
 
+    },
     markers: {
-      size: 0,
+      size: 4,
+      colors: ["#5750F1"],
+      // strokeColor: "#fff",
+      strokeWidth: 2,
+      shape: "circle",
+      hover: {
+        size: 10,
+      },
     },
     grid: {
       strokeDashArray: 5,
@@ -79,38 +94,26 @@ const ChartOne: React.FC = () => {
     },
     tooltip: {
       fixed: {
-        enabled: !1,
+        enabled: false,
       },
       x: {
-        show: !1,
+        show: true,
+        formatter: (value) => `${value}`,
       },
       y: {
         title: {
-          formatter: function (e) {
-            return "";
+          formatter: function () {
+            return "Produced";
           },
         },
       },
       marker: {
-        show: !1,
+        show: false,
       },
     },
     xaxis: {
       type: "category",
-      categories: [
-        "8 AM",
-        "9 AM",
-        "10 AM",
-        "11 AM",
-        "12 PM",
-        "1 PM",
-        "2 PM",
-        "3 PM",
-        "4 AM",
-        "5 AM",
-        "6 PM",
-        "7 PM",
-      ],
+      categories: categories, // Dynamic categories
       axisBorder: {
         show: false,
       },
@@ -127,6 +130,94 @@ const ChartOne: React.FC = () => {
     },
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await getAuth();
+        const data = parseJwt(token);
+
+        if (data && data.user) {
+          const date = new Date();
+          date.setMinutes(date.getMinutes() + 330); // Add 5 hours 30 minutes (330 minutes)
+
+          const formattedDate = date
+            .toISOString()
+            .slice(0, 16)
+            .replace("T", " ");
+          console.log("date: ", formattedDate);
+          const res = await fetchSolarProduction(
+            data.user.email,
+            formattedDate,
+            selectedOption === "Hourly" ? "day" : "week",
+          );
+
+          console.log("res: ", res);
+
+          // Transform data for the chart
+          if (selectedOption === "Hourly") {
+            const transformedData = res.map((entry: SolarProduction) => ({
+              x: formatTime(entry.timestamp),
+              y: entry.total_power.toFixed(1),
+            }));
+
+            setCategories(res.map((entry: SolarProduction) => formatTime(entry.timestamp)));
+
+            const mainSeries = transformedData.slice(0, transformedData.length - 3); // Exclude the last 3 entries
+            const dottedSeries = transformedData.slice(-3); // Last 3 entries
+
+            // Add the main series and the dotted line series
+            setSeries([
+              { name: "Total Power", data: mainSeries.map((d: any) => d.y) },
+              {
+                name: "Last 3 Entries",
+                data: dottedSeries.map((d: any) => d.y),
+                stroke: {
+                  dashArray: 5, // Make the line dotted
+                },
+              },
+            ]);
+            setSolarData(res);
+          } else {
+            // Handle Weekly Data
+            const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            
+            const transformedData = res.map((entry: any) => ({
+              x: daysOfWeek[new Date(entry.date).getUTCDay()],
+              y: entry.total_power.toFixed(1),
+            }));
+
+            setCategories(res.map((entry: any) => daysOfWeek[(new Date(entry.date)).getUTCDay()]));
+
+            setSeries([
+              { name: "Total Power", data: transformedData.map((d: any) => d.y) },
+            ]);
+            setSolarData(res);
+          }
+        }
+      } catch (error) {
+        console.log("Error fetching solar production", error);
+      }
+    };
+
+    fetchData();
+  }, [selectedOption]);
+
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    let hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+
+    // Determine AM or PM
+    const period = hours >= 12 ? "PM" : "AM";
+
+    // Convert to 12-hour format
+    hours = hours % 12;
+    hours = hours ? hours : 12; // If 0 (midnight), set to 12
+
+    // Return formatted time
+    return `${hours}${minutes === 0 ? "" : ":" + minutes} ${period}`;
+  };
+
   return (
     <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
       <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
@@ -139,7 +230,11 @@ const ChartOne: React.FC = () => {
           <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
           </p>
-          <DefaultSelectOption options={["Hourly", "Weekly"]} />
+          <DefaultSelectOption
+            options={optionsSolar}
+            selectedOption={selectedOption}
+            setSelectedOption={setSelectedOption}
+          />
         </div>
       </div>
       <div>
@@ -157,13 +252,16 @@ const ChartOne: React.FC = () => {
         <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
           <p className="font-medium">Current </p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            400W
+            {solarData[solarData.length - 4]?.total_power.toFixed(1) || 0}W
           </h4>
         </div>
         <div className="xsm:w-1/2">
           <p className="font-medium">Total</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-          2.5kW
+            {solarData
+              .reduce((acc, curr) => acc + curr.total_power, 0)
+              .toFixed(1)}
+            W
           </h4>
         </div>
       </div>
@@ -172,3 +270,4 @@ const ChartOne: React.FC = () => {
 };
 
 export default ChartOne;
+

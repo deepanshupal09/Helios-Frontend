@@ -125,3 +125,22 @@ export async function fetchSolarOverview(email: string, timestamp: string) {
         throw error;
     }
 }
+
+export async function fetchSolarProduction(email: string, date: string, type: string) {
+    const res = await fetch(`${process.env.BACKEND_URL}/api/solar/fetchSolarProduction`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            email: email,
+            date: date,
+            type: type
+        },
+    });
+
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Something went wrong! Please try again.');
+    }
+
+    return await res.json();
+}
