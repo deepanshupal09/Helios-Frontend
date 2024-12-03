@@ -7,6 +7,7 @@ import TableOne from "../Tables/TableOne";
 import DataStatsOne from "@/components/DataStats/DataStatsOne";
 import ChartOne from "@/components/Charts/ChartOne";
 import ChartSix from "@/components/Charts/ChartSix";
+import ChartNine from "../Charts/ChartNine";
 
 const ECommerce: React.FC = () => {
   return (
@@ -18,10 +19,19 @@ const ECommerce: React.FC = () => {
           <ChartOne />
         </div>
         {/* <ChartTwo /> */}
+        <div className="col-span-4 ">
         <ChartThree />
+        </div>
+        <div className="col-span-8 ">
+        <ChartNine />
+        </div>
+        <div className="col-span-7 ">
         <ChartSix />
-        <div className="col-span-12 ">
+          </div>
+          <div className="col-span-5 ">
           <TableOne />
+          
+          
         </div>
       </div>
     </>

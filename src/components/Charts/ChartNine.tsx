@@ -127,7 +127,7 @@ const ChartNine: React.FC = () => {
             options={options}
             series={series}
             type="bar"
-            height={370}
+            height={430}
           />
         </div>
       </div>
