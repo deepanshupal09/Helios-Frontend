@@ -1,20 +1,21 @@
 import { ApexOptions } from "apexcharts";
 import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
-import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 import { fetchConsumption } from "../../../actions/api";
-import { getAuth } from "../../../actions/cookie"; 
-import { parseJwt } from "../../../actions/utils"; 
+import { getAuth } from "../../../actions/cookie";
+import { parseJwt } from "../../../actions/utils";
 
 const ChartNine: React.FC = () => {
   const [series, setSeries] = useState([
-    { name: "Grid", data: [] as number[] },
-    { name: "Solar", data: [] as number[] },
+    { name: "Submeter 1", data: [] as number[] },
+    { name: "Submeter 2", data: [] as number[] },
+    { name: "Submeter 3", data: [] as number[] },
   ]);
 
   const [categories, setCategories] = useState<string[]>([]); 
+
   const options: ApexOptions = {
-    colors: ["#5750F1", "#0ABEF9"],
+    colors: ["#5750F1", "#0ABEF9", "#C5A7FF"],
     chart: {
       fontFamily: "Satoshi, sans-serif",
       type: "bar",
@@ -36,8 +37,6 @@ const ChartNine: React.FC = () => {
         horizontal: false,
         borderRadius: 3,
         columnWidth: "25%",
-        borderRadiusApplication: "end",
-        borderRadiusWhenStacked: "last",
       },
     },
     dataLabels: { enabled: false },
@@ -46,7 +45,9 @@ const ChartNine: React.FC = () => {
       xaxis: { lines: { show: false } },
       yaxis: { lines: { show: true } },
     },
-    xaxis: { categories: categories }, 
+    xaxis: {
+      categories: categories, 
+    },
     yaxis: {
       labels: {
         formatter: (value) => Math.round(value).toString(),
@@ -58,7 +59,6 @@ const ChartNine: React.FC = () => {
       fontFamily: "Satoshi",
       fontWeight: 500,
       fontSize: "14px",
-      markers: { radius: 99, width: 16, height: 16, strokeWidth: 10, strokeColor: "transparent" },
     },
     fill: { opacity: 1 },
   };
@@ -78,20 +78,29 @@ const ChartNine: React.FC = () => {
           const nowUTC = new Date();
           const istOffset = 5.5 * 60 * 60 * 1000;
           const nowIST = new Date(nowUTC.getTime() + istOffset);
-          const timestamp = "2024-12-06"; 
+          const timestamp = '2024-12-06'; 
 
           const tariffData = await fetchConsumption(email, timestamp);
+          // console.log("Tariff API Response:", tariffData);
+
           if (tariffData) {
             const last7DaysData = tariffData.grid_consumption.slice(-7);
-
-            const gridData = last7DaysData.map((item: any) => (item.total_power || 0) / 1000);
-            const solarData = tariffData.solar_consumption.slice(-7).map((item: any) => (item.total_power || 0) / 1000);
-            
             const days = last7DaysData.map((item: any) => item.day_name.slice(0, 3)); 
+
             setCategories(days);
+
+            const submeter1Data = last7DaysData.map((item: any) => item.submeter_1 || 0);
+            const submeter2Data = last7DaysData.map((item: any) => item.submeter_2 || 0);
+            const submeter3Data = last7DaysData.map((item: any) => item.submeter_3 || 0);
+
+            // console.log("Submeter 1 Data:", submeter1Data);
+            // console.log("Submeter 2 Data:", submeter2Data);
+            // console.log("Submeter 3 Data:", submeter3Data);
+
             setSeries([
-              { name: "Grid", data: gridData },
-              { name: "Solar", data: solarData },
+              { name: "Submeter 1", data: submeter1Data },
+              { name: "Submeter 2", data: submeter2Data },
+              { name: "Submeter 3", data: submeter3Data },
             ]);
           }
         }
@@ -108,11 +117,8 @@ const ChartNine: React.FC = () => {
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Linked Device Consumption
+            Linked Devices Consumption
           </h4>
-        </div>
-        <div>
-          <DefaultSelectOption options={["This Week", "Last Week"]} />
         </div>
       </div>
 
