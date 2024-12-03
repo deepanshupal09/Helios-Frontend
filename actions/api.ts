@@ -294,7 +294,61 @@ export async function updateStatus(email: string, status: string) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      body: JSON.stringify({ email: email, status: status }),
+    },
+    body: JSON.stringify({ email: email, status: status }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(
+      errorData.message || "Something went wrong! Please try again.",
+    );
+  }
+
+  return await res.json();
+}
+export async function fetchStatus(email: string)  {
+  const res = await fetch(`${process.env.BACKEND_URL}/api/solar/fetchStatus`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      email: email
+    },
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(
+      errorData.message || "Something went wrong! Please try again.",
+    );
+  }
+
+  return await res.json();
+}
+export async function updateBattery(email: string, battery: number) {
+  const res = await fetch(`${process.env.BACKEND_URL}/api/solar/updateBattery`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email: email, battery: battery }),
+  });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(
+      errorData.message || "Something went wrong! Please try again.",
+    );
+  }
+
+  return await res.json();
+}
+export async function fetchBattery(email: string)  {
+  const res = await fetch(`${process.env.BACKEND_URL}/api/solar/fetchBattery`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      email: email
     },
   });
 
