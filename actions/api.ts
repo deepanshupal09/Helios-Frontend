@@ -161,7 +161,7 @@ export async function fetchLinkedDeviceInfo(email: string, timestamp: string) {
         data.message || "Something went wrong! Please try again.",
       );
     }
-    console.log("Linked Device Data:", data);
+    // console.log("Linked Device Data:", data);
     return data;
   } catch (error) {
     console.error("Fetch Error:", error);

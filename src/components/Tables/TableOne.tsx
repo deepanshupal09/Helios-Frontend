@@ -1,14 +1,13 @@
-import { BRAND } from "@/types/brand";
+import { BRAND2 } from "@/types/brand";
 import Image from "next/image";
 
-const brandData: BRAND[] = [
+const brandData: BRAND2[] = [
   {
     logo: "/images/brand/brand-01.png",
     name: "BSES",
     visitors: 3.5,
     revenues: "5.768",
     sales: 5.90,
-    conversion: 4.8,
   },
   {
     logo: "/images/brand/brand-02.png",
@@ -16,7 +15,6 @@ const brandData: BRAND[] = [
     visitors: 2.2,
     revenues: "4.635",
     sales: 4.67,
-    conversion: 4.3,
   },
   {
     logo: "/images/brand/brand-03.png",
@@ -24,7 +22,6 @@ const brandData: BRAND[] = [
     visitors: 2.1,
     revenues: "4.290",
     sales: 4.20,
-    conversion: 3.7,
   },
   {
     logo: "/images/brand/brand-04.png",
@@ -32,7 +29,6 @@ const brandData: BRAND[] = [
     visitors: 1.5,
     revenues: "3.580",
     sales: 3.89,
-    conversion: 2.5,
   },
 ];
 
@@ -44,7 +40,7 @@ const TableOne = () => {
       </h4>
 
       <div className="flex flex-col">
-        <div className="grid grid-cols-3 sm:grid-cols-5">
+        <div className="grid grid-cols-3 sm:grid-cols-4">
           <div className="px-2 pb-3.5">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Provider
@@ -65,16 +61,16 @@ const TableOne = () => {
               Avg. Tarrif Rate
             </h5>
           </div>
-          <div className="hidden px-2 pb-3.5 text-center sm:block">
+          {/* <div className="hidden px-2 pb-3.5 text-center sm:block">
             <h5 className="text-sm font-medium uppercase xsm:text-base">
               Downtime
             </h5>
-          </div>
+          </div> */}
         </div>
 
         {brandData.map((brand, key) => (
           <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
+            className={`grid grid-cols-3 sm:grid-cols-4 ${
               key === brandData.length - 1
                 ? ""
                 : "border-b border-stroke dark:border-dark-3"
@@ -108,11 +104,11 @@ const TableOne = () => {
               </p>
             </div>
 
-            <div className="hidden items-center justify-center px-2 py-4 sm:flex">
+            {/* <div className="hidden items-center justify-center px-2 py-4 sm:flex">
               <p className="font-medium text-dark dark:text-white">
                 {brand.conversion}%
               </p>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>

@@ -201,7 +201,7 @@ const ChartOne: React.FC = () => {
             options={options}
             series={series}
             type="area"
-            height={310}
+            height={360}
           />
         </div>
       </div>
