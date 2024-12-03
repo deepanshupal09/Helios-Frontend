@@ -63,14 +63,11 @@ export async function fetchTariff(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
-        console.log("API Response:", data);
+        // console.log("API Response:", data);
         return data;
     } catch (error) {
         console.error("Fetch Tariff Error:", error);
@@ -87,14 +84,11 @@ export async function fetchConsumption(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
-        console.log("API Response:", data);
+        // console.log("API Response:", data);
         return data;
     } catch (error) {
         console.error("Fetch Tariff Error:", error);
@@ -111,14 +105,73 @@ export async function fetchSolarOverview(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
-        console.log("API Response:", data);
+        // console.log("API Response:", data);
+        return data;
+    } catch (error) {
+        console.error("Fetch Tariff Error:", error);
+        throw error;
+    }
+}
+export async function fetchLinkedDeviceInfo(email: string, timestamp: string) {
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/dashboard/fetchLinkedDeviceConsumption`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                date: timestamp, 
+            },
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || "Something went wrong! Please try again.");
+        }
+        console.log("Linked Device Data:", data);
+        return data;
+    } catch (error) {
+        console.error("Fetch Error:", error);
+        throw error;
+    }
+}
+export async function fetchDashboardInfo(email: string, timestamp: string) {
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/dashboard/fetch-data`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                timestamp,
+            },
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || "Something went wrong! Please try again.");
+        }
+        return data;
+    } catch (error) {
+        console.error("Fetch Tariff Error:", error);
+        throw error;
+    }
+}
+export async function fetchConsumptionPrediction(email: string, timestamp: string) {
+    try {
+        const res = await fetch(`${process.env.BACKEND_URL}/api/linkedDevices/fetch-consumption`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                email,
+                timestamp,
+            },
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.message || "Something went wrong! Please try again.");
+        }
+        // console.log("API Response:", data);
         return data;
     } catch (error) {
         console.error("Fetch Tariff Error:", error);

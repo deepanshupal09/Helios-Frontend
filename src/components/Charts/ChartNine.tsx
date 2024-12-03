@@ -45,7 +45,7 @@ const ChartNine: React.FC = () => {
       xaxis: { lines: { show: false } },
       yaxis: { lines: { show: true } },
     },
-    xaxis: { categories: ["M", "T", "W", "T", "F","S","S"] },
+    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri","Sat","Sun"] },
     yaxis: {
       labels: {
         formatter: (value) => Math.round(value).toString(), 
@@ -62,16 +62,15 @@ const ChartNine: React.FC = () => {
     fill: { opacity: 1 },
   };
   
-  
   const [user, setUser]  = useState<UserType | null>(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = await getAuth();
-        console.log("Token:", token);
+        // console.log("Token:", token);
 
         const data = parseJwt(token);
-        console.log("Decoded Token Data:", data);
+        // console.log("Decoded Token Data:", data);
 
         if (data && data.user) {
           setUser(data.user);
@@ -82,11 +81,11 @@ const ChartNine: React.FC = () => {
           const istOffset = 5.5 * 60 * 60 * 1000; 
           const nowIST = new Date(nowUTC.getTime() + istOffset);
           // const timestamp = nowIST.toISOString().split('T')[0];
-          const timestamp = '2024-12-06';
-          console.log("Fetching tariff for:", { email, timestamp });
+          const timestamp = '2024-12-04';
+          // console.log("Fetching tariff for:", { email, timestamp });
 
           const tariffData = await fetchConsumption(email, timestamp);
-          console.log("Tariff API Response:", tariffData);
+          // console.log("Tariff API Response:", tariffData);
           if (tariffData) {
             const gridData = tariffData.grid_consumption.map(
               (item: any) => (item.total_power || 0) / 1000 

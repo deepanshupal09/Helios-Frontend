@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect, useState} from "react";
 import { dataStats } from "@/types/dataStats";
-import { fetchConsumption } from "../../../actions/api";
+import { fetchLinkedDeviceInfo } from "../../../actions/api";
+import { getAuth } from "../../../actions/cookie";
+import { parseJwt } from "../../../actions/utils";
 
 const dataStatsList = [
   {
@@ -98,70 +100,121 @@ const dataStatsList = [
 ];
 
 const DataStatsOne: React.FC<dataStats> = () => {
+  const [subOne, setSubOne] = useState<number>(0);
+  const [subTwo, setSubTwo] = useState<number>(0);
+  const [subThree, setSubThree] = useState<number>(0);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = await getAuth();
+        const data = parseJwt(token);
+
+        if (data && data.user) {
+          const email = "abcd@gmail.com"; 
+          const timestamp = "2024-12-05"; 
+          const linkedData = await fetchLinkedDeviceInfo(email, timestamp);
+
+          if (linkedData && linkedData.length > 0) {
+            const subMeter1 = linkedData[0].total_submeter_1 / 1000;
+            const subMeter2 = linkedData[0].total_submeter_2 ;
+            const subMeter3 = linkedData[0].total_submeter_3 / 1000;
+
+            const subMeter1Rounded = parseFloat(subMeter1.toFixed(2));
+            setSubOne(subMeter1Rounded);
+            const subMeter2Rounded = parseFloat(subMeter2.toFixed(2));
+            setSubTwo(subMeter2Rounded);
+            const subMeter3Rounded = parseFloat(subMeter3.toFixed(2));
+            setSubThree(subMeter3Rounded);
+
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching linked device data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
+  const updatedDataStatsList = [
+    {
+      ...dataStatsList[0],
+      value: `${subOne} kW`,
+    },
+    {
+      ...dataStatsList[1],
+      value: `${subTwo} W`,
+    },
+    {
+      ...dataStatsList[2],
+      value: `${subThree} kW`,
+    },
+    
+  ];
+
   return (
-    <>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
-        {dataStatsList.map((item, index) => (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 xl:grid-cols-3 2xl:gap-7.5">
+      {updatedDataStatsList.map((item, index) => (
+        <div
+          key={index}
+          className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark"
+        >
           <div
-            key={index}
-            className="rounded-[10px] bg-white p-6 shadow-1 dark:bg-gray-dark"
+            className="flex h-14.5 w-14.5 items-center justify-center rounded-full"
+            style={{ backgroundColor: item.color }}
           >
-            <div
-              className="flex h-14.5 w-14.5 items-center justify-center rounded-full"
-              style={{ backgroundColor: item.color }}
-            >
-              {item.icon}
-            </div>
-
-            <div className="mt-6 flex items-end justify-between">
-              <div>
-                <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
-                  {item.value}
-                </h4>
-                <span className="text-body-sm font-medium">{item.title}</span>
-              </div>
-
-              <span
-                className={`flex items-center gap-1.5 text-body-sm font-medium ${
-                  item.growthRate > 0 ? "text-green" : "text-red"
-                }`}
-              >
-                {item.growthRate}%
-                {item.growthRate > 0 ? (
-                  <svg
-                    className="fill-current"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4.35716 2.3925L0.908974 5.745L5.0443e-07 4.86125L5 -5.1656e-07L10 4.86125L9.09103 5.745L5.64284 2.3925L5.64284 10L4.35716 10L4.35716 2.3925Z"
-                      fill=""
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="fill-current"
-                    width="10"
-                    height="10"
-                    viewBox="0 0 10 10"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M5.64284 7.6075L9.09102 4.255L10 5.13875L5 10L-8.98488e-07 5.13875L0.908973 4.255L4.35716 7.6075L4.35716 7.6183e-07L5.64284 9.86625e-07L5.64284 7.6075Z"
-                      fill=""
-                    />
-                  </svg>
-                )}
-              </span>
-            </div>
+            {item.icon}
           </div>
-        ))}
-      </div>
-    </>
+
+          <div className="mt-6 flex items-end justify-between">
+            <div>
+              <h4 className="mb-1.5 text-heading-6 font-bold text-dark dark:text-white">
+                {item.value}
+              </h4>
+              <span className="text-body-sm font-medium">{item.title}</span>
+            </div>
+
+            <span
+              className={`flex items-center gap-1.5 text-body-sm font-medium ${
+                item.growthRate > 0 ? "text-green" : "text-red"
+              }`}
+            >
+              {item.growthRate}%
+              {item.growthRate > 0 ? (
+                <svg
+                  className="fill-current"
+                  width="10"
+                  height="10"
+                  viewBox="0 0 10 10"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4.35716 2.3925L0.908974 5.745L5.0443e-07 4.86125L5 -5.1656e-07L10 4.86125L9.09103 5.745L5.64284 2.3925L5.64284 10L4.35716 10L4.35716 2.3925Z"
+                    fill=""
+                  />
+                </svg>
+              ) : (
+                <svg
+                  className="fill-current"
+                  width="10"
+                  height="10"
+                  viewBox="0 0 10 10"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.64284 7.6075L9.09102 4.255L10 5.13875L5 10L-8.98488e-07 5.13875L0.908973 4.255L4.35716 7.6075L4.35716 7.6183e-07L5.64284 9.86625e-07L5.64284 7.6075Z"
+                    fill=""
+                  />
+                </svg>
+              )}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
