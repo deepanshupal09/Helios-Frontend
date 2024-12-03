@@ -126,7 +126,7 @@ const ChartOne: React.FC = () => {
       },
       labels: {
         formatter: function (value) {
-          return value.toFixed(0)+"W"; 
+          return value !== null && value !== undefined ? value.toFixed(0) + "W" : "-";
         },
       },
     },
@@ -148,7 +148,7 @@ const ChartOne: React.FC = () => {
           const timestamp = '2024-12-06';
     
           const tariffData = await fetchSolarOverview(email, timestamp);
-          console.log("solar API Response:", tariffData);
+          // console.log("solar API Response:", tariffData);
     
           if (tariffData) {
             const { solar_consumption, solar_production } = tariffData;

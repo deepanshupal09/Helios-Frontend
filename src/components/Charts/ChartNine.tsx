@@ -62,7 +62,6 @@ const ChartNine: React.FC = () => {
     fill: { opacity: 1 },
   };
   
-  
   const [user, setUser]  = useState<UserType | null>(null);
   useEffect(() => {
     const fetchData = async () => {
@@ -82,11 +81,11 @@ const ChartNine: React.FC = () => {
           const istOffset = 5.5 * 60 * 60 * 1000; 
           const nowIST = new Date(nowUTC.getTime() + istOffset);
           // const timestamp = nowIST.toISOString().split('T')[0];
-          const timestamp = '2024-12-06';
-          console.log("Fetching tariff for:", { email, timestamp });
+          const timestamp = '2024-12-04';
+          // console.log("Fetching tariff for:", { email, timestamp });
 
           const tariffData = await fetchConsumption(email, timestamp);
-          console.log("Tariff API Response:", tariffData);
+          // console.log("Tariff API Response:", tariffData);
           if (tariffData) {
             const gridData = tariffData.grid_consumption.map(
               (item: any) => (item.total_power || 0) / 1000 
