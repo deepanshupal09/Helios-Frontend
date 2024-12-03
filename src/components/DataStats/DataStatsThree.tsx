@@ -144,7 +144,7 @@ const DataStatsOne: React.FC<dataStats> = () => {
     },
     {
       ...dataStatsList[1],
-      value: `${subTwo}W`,
+      value: `${subTwo} W`,
     },
     {
       ...dataStatsList[2],

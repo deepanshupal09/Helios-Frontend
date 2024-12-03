@@ -18,14 +18,14 @@ const ChartTen: React.FC = () => {
 
   const options: ApexOptions = {
     legend: {
-      show: false,
+      show: true,
       position: "top",
-      horizontalAlign: "left",
+      horizontalAlign: "right",
     },
     colors: ["#5750F1", "#0ABEF9"],
     chart: {
       fontFamily: "Satoshi, sans-serif",
-      height: 310,
+      height: 410,
       type: "area",
       toolbar: {
         show: false,
@@ -159,7 +159,7 @@ const ChartTen: React.FC = () => {
             const actualTariff = cData.actual_consumption || []; 
   
             if (actualTariff.length === 0) {
-              console.error("No actual tariff data available.");
+              // console.error("No actual tariff data available.");
               return; 
             }
   
@@ -230,7 +230,7 @@ const ChartTen: React.FC = () => {
       <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Hourly Device Consumption
+            Hourly Consumption Analytics
           </h4>
         </div>
         <div className="flex items-center gap-2.5">

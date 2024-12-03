@@ -63,13 +63,10 @@ export async function fetchTariff(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
         // console.log("API Response:", data);
         return data;
     } catch (error) {
@@ -87,13 +84,10 @@ export async function fetchConsumption(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
         // console.log("API Response:", data);
         return data;
     } catch (error) {
@@ -111,13 +105,10 @@ export async function fetchSolarOverview(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
         // console.log("API Response:", data);
         return data;
     } catch (error) {
@@ -135,13 +126,10 @@ export async function fetchLinkedDeviceInfo(email: string, timestamp: string) {
                 date: timestamp, 
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
         console.log("Linked Device Data:", data);
         return data;
     } catch (error) {
@@ -159,9 +147,7 @@ export async function fetchDashboardInfo(email: string, timestamp: string) {
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
@@ -181,13 +167,10 @@ export async function fetchConsumptionPrediction(email: string, timestamp: strin
                 timestamp,
             },
         });
-
         const data = await res.json();
-
         if (!res.ok) {
             throw new Error(data.message || "Something went wrong! Please try again.");
         }
-
         // console.log("API Response:", data);
         return data;
     } catch (error) {

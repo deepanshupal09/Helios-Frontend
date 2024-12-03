@@ -45,7 +45,7 @@ const ChartNine: React.FC = () => {
       xaxis: { lines: { show: false } },
       yaxis: { lines: { show: true } },
     },
-    xaxis: { categories: ["M", "T", "W", "T", "F","S","S"] },
+    xaxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri","Sat","Sun"] },
     yaxis: {
       labels: {
         formatter: (value) => Math.round(value).toString(), 
@@ -67,10 +67,10 @@ const ChartNine: React.FC = () => {
     const fetchData = async () => {
       try {
         const token = await getAuth();
-        console.log("Token:", token);
+        // console.log("Token:", token);
 
         const data = parseJwt(token);
-        console.log("Decoded Token Data:", data);
+        // console.log("Decoded Token Data:", data);
 
         if (data && data.user) {
           setUser(data.user);
