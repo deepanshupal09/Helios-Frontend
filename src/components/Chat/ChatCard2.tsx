@@ -161,6 +161,32 @@ const ChatCard = () => {
               <h5 className="font-medium text-dark dark:text-white">
                 {chat.name}
               </h5>
+              <div className="mt-1 flex items-center gap-2">
+                {chat.valu && (
+                  <span
+                    className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                      chat.valu === "max"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {chat.valu === "max" ? "High" : "Low"}
+                  </span>
+                )}
+                {chat.meterType && (
+                  <span
+                    className={`rounded-md px-2 py-0.5 text-xs font-medium ${
+                      chat.meterType === "SubMeter 1"
+                        ? "bg-blue-100 text-blue-700"
+                        : chat.meterType === "SubMeter 2"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-purple-100 text-purple-700"
+                    }`}
+                  >
+                    {chat.meterType}
+                  </span>
+                )}
+              </div>
             </div>
             {chat.textCount && (
               <div className="flex items-center justify-center rounded-full bg-primary px-2 py-0.5">
@@ -172,66 +198,6 @@ const ChatCard = () => {
           </Link>
         ))}
       </div>
-
-      {/* Global Duration Modal */}
-      {showGlobalModal && (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md shadow-md">
-            <h4 className="text-lg font-bold">Set Auto Scheduling Duration </h4>
-            <input
-              type="number"
-              placeholder="Enter duration in minutes"
-              value={globalDuration}
-              onChange={(e) => setGlobalDuration(e.target.value)}
-              className="mt-2 p-2 border rounded-md w-full"
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                className="px-4 py-2 bg-gray-300 rounded-md"
-                onClick={() => setShowGlobalModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                onClick={handleGlobalDurationSet}
-              >
-                Set
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Child Duration Modal */}
-      {showChildModal.visible && (
-        <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-md shadow-md">
-            <h4 className="text-lg font-bold">Set Manual Duration for {chatData[showChildModal.index].name}</h4>
-            <input
-              type="number"
-              placeholder="Enter duration in minutes"
-              value={childDuration}
-              onChange={(e) => setChildDuration(e.target.value)}
-              className="mt-2 p-2 border rounded-md w-full"
-            />
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                className="px-4 py-2 bg-gray-300 rounded-md"
-                onClick={() => setShowChildModal({ index: -1, visible: false })}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                onClick={handleChildDurationSet}
-              >
-                Set
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
