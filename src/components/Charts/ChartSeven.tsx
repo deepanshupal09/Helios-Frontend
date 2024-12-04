@@ -149,7 +149,7 @@ const ChartOne: React.FC = () => {
           console.log("date: ", formattedDate);
           const res = await fetchSolarProduction(
             data.user.email,
-            formattedDate,
+            '2024-12-06 12:00',
             selectedOption === "Hourly" ? "day" : "week",
           );
 
@@ -180,18 +180,22 @@ const ChartOne: React.FC = () => {
             { name: "Generated", data: solidSeries },
             { name: "Predicted", data: dottedSeries },
           ]);
-
+          
+          console.log("series: ", [
+            { name: "Generated", data: solidSeries },
+            { name: "Predicted", data: dottedSeries },
+          ])
           setSolarData(res);
           } else {
             // Handle Weekly Data
             const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
             
             const transformedData = res.map((entry: any) => ({
-              x: daysOfWeek[new Date(entry.date).getUTCDay()],
+              x: new Date(entry.date).toDateString().slice(0,-5),
               y: entry.total_power.toFixed(1),
             }));
 
-            setCategories(res.map((entry: any) => daysOfWeek[(new Date(entry.date)).getUTCDay()]));
+            setCategories(res.map((entry: any) => (new Date(entry.date)).toDateString().slice(0,-5)));
             const solidSeries = transformedData.map((point:{x: string, y: number}, index: number) => ({
               x: point.x,
               y: index < transformedData.length - 3 ? point.y : null, // Null for last 3 points
@@ -201,11 +205,18 @@ const ChartOne: React.FC = () => {
               x: point.x,
               y: index >= transformedData.length - 4 ? point.y : null, // Null for others
             }));
+
+            console.log("categories: ", res.map((entry: any) => (new Date(entry.date)).toDateString().slice(0,-5)))
   
             setSeries([
               { name: "Generated", data: solidSeries },
               { name: "Predicted", data: dottedSeries },
             ]);
+
+            console.log("series: ", [
+              { name: "Generated", data: solidSeries },
+              { name: "Predicted", data: dottedSeries },
+            ])
   
             setSolarData(res);
           }

@@ -6,7 +6,7 @@ import { deleteAuth } from "../../../actions/cookie";
 import { useRouter } from "next/navigation";
 import { getAuth } from "../../../actions/cookie";
 import { parseJwt } from "../../../actions/utils";
-import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import { Description, Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import AlertSuccess from "../Alerts/AlertSuccess";
 import AlertError from "../Alerts/AlertError";
 import AlertWarning from "../Alerts/AlertWarning";
@@ -176,7 +176,8 @@ const DropdownUser = () => {
       )}
 
 
-        <Dialog open={logoutModalOpen} onClose={() => setLogoutModalOpen(false)} className="relative z-50">
+        <Dialog open={logoutModalOpen} onClose={() => setLogoutModalOpen(false)} className="relative z-[100]">
+        <DialogBackdrop className="fixed inset-0 bg-opacity-50 backdrop-blur-sm" />
         <div className="fixed inset-0 flex w-screen items-center justify-center">
           <DialogPanel className="max-w-lg rounded-lg border-[0.5px] border-stroke  gap-2 px-6 pb-5.5 pt-5.5  bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark ">
             <DialogTitle className="text-dark text-xl dark:text-white font-bold">Logout</DialogTitle>

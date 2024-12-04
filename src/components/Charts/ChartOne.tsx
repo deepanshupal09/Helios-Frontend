@@ -167,7 +167,7 @@ const ChartOne: React.FC = () => {
             const lastActualTariff = actualTariff[actualTariff.length - 1];
             const { timestamp: lastTimestamp, rate: lastActualRate } =
               lastActualTariff;
-              setCurrPrice(lastActualRate ? Number((lastActualRate*12).toFixed(2)):null);
+              setCurrPrice(lastActualRate ? Number((lastActualRate).toFixed(3)):null);
             const matchingForecast = forecastTariff.find(
               (item: any) => item.datetime === lastTimestamp
             );
@@ -175,7 +175,7 @@ const ChartOne: React.FC = () => {
             const matchingForecastRate = matchingForecast
               ? matchingForecast.forecast_rate
               : null;
-              setPrePrice(matchingForecastRate ? Number((matchingForecastRate * 12).toFixed(2)) : null);
+              setPrePrice(matchingForecastRate ? Number((matchingForecastRate).toFixed(3)) : null);
             // console.log("Last Actual Rate:", lastActualRate);
             // console.log("Matching Forecast Rate:", matchingForecastRate);
   

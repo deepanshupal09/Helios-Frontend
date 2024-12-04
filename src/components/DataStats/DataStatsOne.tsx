@@ -169,7 +169,7 @@ const DataStatsOne: React.FC<dataStats> = () => {
     },
     {
       ...dataStatsList[1],
-      value: `${solarEnergySold.toFixed(2)}W`,
+      value: `${solarEnergySold.toFixed(2)} W`,
     },
     {
       ...dataStatsList[2],

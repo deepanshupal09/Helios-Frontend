@@ -2,7 +2,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { Chat2 } from "@/types/chat";
-import { Description, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+  Description,
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 
 const chatData: Chat2[] = [
   {
@@ -54,12 +60,17 @@ const chatData: Chat2[] = [
 
 const ChatCard = () => {
   const [globalToggle, setGlobalToggle] = useState("Manual");
-  const [childToggles, setChildToggles] = useState(chatData.map(() => "Manual"));
+  const [childToggles, setChildToggles] = useState(
+    chatData.map(() => "Manual"),
+  );
   const [disableChildButtons, setDisableChildButtons] = useState(false);
   const [childWithTime, setChildWithTime] = useState(chatData.map(() => false));
-  
+
   const [showGlobalModal, setShowGlobalModal] = useState(false);
-  const [showChildModal, setShowChildModal] = useState<{ index: number; visible: boolean }>({
+  const [showChildModal, setShowChildModal] = useState<{
+    index: number;
+    visible: boolean;
+  }>({
     index: -1,
     visible: false,
   });
@@ -97,12 +108,12 @@ const ChatCard = () => {
 
   return (
     <div className="col-span-12 rounded-[10px] bg-white py-6 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-4">
-      <div className="flex items-center justify-between px-7.5 mb-5.5">
+      <div className="mb-5.5 flex items-center justify-between px-7.5">
         <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
           Smart Scheduling
         </h4>
         <button
-          className={`rounded-full px-3 py-1 border text-sm font-medium ${
+          className={`rounded-full border px-3 py-1 text-sm font-medium ${
             globalToggle === "Manual"
               ? "bg-green-800 text-white"
               : "bg-red-800 text-white"
@@ -121,7 +132,7 @@ const ChatCard = () => {
             key={index}
           >
             <button
-              className={`rounded-full px-2 py-0.5 border text-xs font-medium ${
+              className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
                 childToggles[index] === "Manual"
                   ? childWithTime[index]
                     ? "bg-orange-400 text-white"
@@ -153,8 +164,8 @@ const ChatCard = () => {
                   chat.active === true
                     ? "bg-green"
                     : chat.active === false
-                    ? "bg-red-light"
-                    : "bg-orange-light"
+                      ? "bg-red-light"
+                      : "bg-orange-light"
                 }`}
               ></span>
             </div>
@@ -180,8 +191,8 @@ const ChatCard = () => {
                       chat.meterType === "SubMeter 1"
                         ? "bg-blue-100 text-blue-700"
                         : chat.meterType === "SubMeter 2"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-purple-100 text-purple-700"
+                          ? "bg-yellow-100 text-yellow-700"
+                          : "bg-purple-100 text-purple-700"
                     }`}
                   >
                     {chat.meterType}
@@ -204,8 +215,10 @@ const ChatCard = () => {
       <Dialog
         open={showGlobalModal}
         onClose={() => setShowGlobalModal(false)}
-        className="relative z-50"
+        className="z-100 relative"
       >
+        <DialogBackdrop className="fixed inset-0 bg-opacity-50 backdrop-blur-sm" />
+
         <div className="fixed inset-0 flex w-screen items-center justify-center">
           <DialogPanel className="max-w-lg gap-2 rounded-lg border-[0.5px]  border-stroke bg-white px-6 pb-5.5  pt-5.5 shadow-default dark:border-dark-3 dark:bg-gray-dark ">
             <DialogTitle className="text-xl font-bold text-dark dark:text-white">
@@ -228,7 +241,7 @@ const ChatCard = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <button
-                  className="bg-light hover:bg-primary-dark w-full rounded-lg  dark:bg-dark py-3 font-medium bg-gray-2 dark:text-white focus:outline-none"
+                  className="bg-light hover:bg-primary-dark w-full rounded-lg  bg-gray-2 py-3 font-medium focus:outline-none dark:bg-dark dark:text-white"
                   onClick={() => {
                     setShowGlobalModal(false);
                   }}
@@ -247,15 +260,17 @@ const ChatCard = () => {
         </div>
       </Dialog>
 
-<Dialog
+      <Dialog
         open={showChildModal.visible}
         onClose={() => setShowChildModal({ index: -1, visible: false })}
-        className="relative z-50"
+        className="z-100 relative"
       >
+        <DialogBackdrop className="fixed inset-0 bg-opacity-50 backdrop-blur-sm" />
+
         <div className="fixed inset-0 flex w-screen items-center justify-center">
           <DialogPanel className="max-w-lg gap-2 rounded-lg border-[0.5px]  border-stroke bg-white px-6 pb-5.5  pt-5.5 shadow-default dark:border-dark-3 dark:bg-gray-dark ">
             <DialogTitle className="text-xl font-bold text-dark dark:text-white">
-              Autoschedule{" "}
+              Manual Schedule {showChildModal.index !== -1 && chatData[showChildModal.index].name}
             </DialogTitle>
             <Description className="mb-7  mt-2 font-medium text-dark-5">
               Enter duration (in mins)
@@ -274,7 +289,7 @@ const ChatCard = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <button
-                  className="bg-light hover:bg-primary-dark w-full rounded-lg  dark:bg-dark py-3 font-medium bg-gray-2 dark:text-white focus:outline-none"
+                  className="bg-light hover:bg-primary-dark w-full rounded-lg  bg-gray-2 py-3 font-medium focus:outline-none dark:bg-dark dark:text-white"
                   onClick={() => {
                     setShowChildModal({ index: -1, visible: false });
                   }}

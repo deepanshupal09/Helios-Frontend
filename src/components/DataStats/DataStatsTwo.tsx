@@ -14,6 +14,7 @@ import Battery from "./battery.png";
 import {
   Description,
   Dialog,
+  DialogBackdrop,
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
@@ -389,8 +390,10 @@ const DataStatsOne: React.FC<dataStats> = () => {
       <Dialog
         open={sellModal}
         onClose={() => setSellModal(false)}
-        className="relative z-50"
+        className="relative z-[100]"
       >
+                <DialogBackdrop className="fixed inset-0 bg-opacity-50 backdrop-blur-sm" />
+
         <div className="fixed inset-0 flex w-screen items-center justify-center">
           <DialogPanel className="max-w-lg gap-2 rounded-lg border-[0.5px]  border-stroke bg-white px-6 pb-5.5  pt-5.5 shadow-default dark:border-dark-3 dark:bg-gray-dark ">
             <DialogTitle className="text-xl font-bold text-dark dark:text-white">
@@ -404,11 +407,11 @@ const DataStatsOne: React.FC<dataStats> = () => {
               <div className="relative mb-6">
                 <input
                   type="energy"
-                  placeholder={`Enter amount (max ${Math.min(battery*220, 5000)}) `}
+                  placeholder={`Enter amount (max ${Math.min(battery*220, 5000).toFixed(1)}) `}
                   name="email"
                   value={sellValue}
                   onChange={(e) => setSellValue(e.target.value)}
-                  className="w-full rounded-lg border border-stroke bg-transparent py-[15px] pl-6 pr-11 font-medium text-dark outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
+                  className="w-72 rounded-lg  border border-stroke bg-transparent py-[15px] pl-6 pr-11 font-medium text-dark outline-none focus:border-primary focus-visible:shadow-none dark:border-dark-3 dark:bg-dark-2 dark:text-white dark:focus:border-primary"
                 />
               </div>
               <div className="flex justify-end gap-2">
