@@ -2,33 +2,34 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ClickOutside from "@/components/ClickOutside";
 import Image from "next/image";
+import { getSocket } from "../../../actions/websocket";
 
-const notificationList = [
-  {
-    title: "Hike in Tariff Rate!",
-    subTitle: "Tariff Rate hiked by ₹1.02",
-  },
-  {
-    title: "Solar Consumption",
-    subTitle: "Your Solar Energy is close to the threshold",
-  },
-  {
-    title: "Smart Scheduling",
-    subTitle: "Upcoming tariff hike, switch to Solar Power",
-  },
-  {
-    title: "Smart Scheduling",
-    subTitle: "Smart Device disconnected to Solar Power ",
-  },
-  {
-    title: "Bill Due",
-    subTitle: "Bill due of ₹549 on 16 Nov 2024 ",
-  },
-];
+type NotificationType = {
+  title: string;
+  subTitle: string;
+};
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [notifying, setNotifying] = useState(true);
+  const [notifying, setNotifying] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationType[]>([]);
+  const socket = getSocket();
+
+  useEffect(() => {
+    const getSocket = async () => {
+      if (socket) {
+        await socket.on("notification", (notification: NotificationType) => {
+          console.log("notification received: ", notification);
+          setNotifications((prevNotifications) => [
+            ...prevNotifications,
+            notification,
+          ]);
+          setNotifying(true);
+        });
+      }
+    };
+    getSocket();
+  }, [socket]);
 
   return (
     <ClickOutside
@@ -62,7 +63,7 @@ const DropdownNotification = () => {
             </svg>
 
             <span
-              className={`absolute -top-0.5 right-0 z-1 h-2.5 w-2.5 rounded-full border-2 border-gray-2 bg-red-light dark:border-dark-3 ${
+              className={`absolute -top-1.5 -right-2 z-1 h-4 w-4 rounded-full border-2 border-gray-2 bg-red-light dark:border-dark-3 ${
                 !notifying ? "hidden" : "inline"
               }`}
             >
@@ -73,19 +74,21 @@ const DropdownNotification = () => {
 
         {dropdownOpen && (
           <div
-            className={`absolute -right-27 mt-7.5 flex h-[550px] w-75 flex-col rounded-xl border-[0.5px] border-stroke bg-white px-5.5 pb-5.5 pt-5 shadow-default dark:border-dark-3 dark:bg-gray-dark sm:right-0 sm:w-[364px]`}
+            className={`absolute -right-27 mt-7.5 flex h-auto w-75 flex-col rounded-xl border-[0.5px] border-stroke bg-white px-5.5 pb-5.5 pt-5 shadow-default dark:border-dark-3 dark:bg-gray-dark sm:right-0 sm:w-[364px]`}
           >
             <div className="mb-5 flex items-center justify-between">
               <h5 className="text-lg font-medium text-dark dark:text-white">
                 Notifications
               </h5>
-              <span className="rounded-md bg-primary px-2 py-0.5 text-body-xs font-medium text-white">
-                5 new
-              </span>
+              {notifications.length > 0 && (
+                <span className="rounded-md bg-primary px-2 py-0.5 text-body-xs font-medium text-white">
+                  {notifications.length} new
+                </span>
+              )}
             </div>
 
             <ul className="no-scrollbar mb-5 flex h-auto flex-col gap-1 overflow-y-auto">
-              {notificationList.map((item, index) => (
+              {notifications.map((item, index) => (
                 <li key={index}>
                   <Link
                     className="flex items-center gap-4 rounded-[10px] p-2.5 hover:bg-gray-2 dark:hover:bg-dark-3"
@@ -117,12 +120,16 @@ const DropdownNotification = () => {
               ))}
             </ul>
 
-            <Link
+            {notifications.length === 0 && (
+              <div className="text-center">No new notifications</div>
+            )}
+
+            {/* <Link
               className="flex items-center justify-center rounded-[7px] border border-primary p-2.5 font-medium text-primary hover:bg-blue-light-5 dark:border-dark-4 dark:text-dark-6 dark:hover:border-primary dark:hover:bg-blue-light-3 dark:hover:text-primary"
               href="#"
             >
               See all notifications
-            </Link>
+            </Link> */}
           </div>
         )}
       </li>
