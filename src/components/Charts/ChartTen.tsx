@@ -154,7 +154,7 @@ const ChartTen: React.FC = () => {
           const timestamp = timestampUTC.toISOString();
   
           const cData = await fetchConsumptionPrediction(email, timestamp);
-          console.log("data: ", cData)
+          // console.log("data: ", cData)
           if (cData) {
             const forecastTariff = cData.forecast_consumption || [];
             const actualTariff = cData.actual_consumption || []; 
