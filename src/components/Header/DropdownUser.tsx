@@ -61,7 +61,7 @@ const DropdownUser = () => {
           <Image
             width={112}
             height={112}
-            src="/images/user/user-28.png"
+            src="/images/user/sun1.png"
             alt="User"
             className="overflow-hidden rounded-full"
           />
@@ -93,7 +93,7 @@ const DropdownUser = () => {
               <Image
                 width={112}
                 height={112}
-                src="/images/user/user-28.png"
+                src="/images/user/sun1.png"
                 alt="User"
                 className="overflow-hidden rounded-full"
               />
