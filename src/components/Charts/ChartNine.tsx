@@ -108,11 +108,11 @@ const ChartNine: React.FC = () => {
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Linked Device Consumption
+            Total Consumption
           </h4>
         </div>
         <div>
-          <DefaultSelectOption options={["This Week", "Last Week"]} />
+          <DefaultSelectOption options={["This Week"]} />
         </div>
       </div>
 

@@ -1,9 +1,15 @@
 import { ApexOptions } from "apexcharts";
 import React, { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts";
 import { fetchConsumption } from "../../../actions/api";
 import { getAuth } from "../../../actions/cookie";
 import { parseJwt } from "../../../actions/utils";
+
+import dynamic from "next/dynamic";
+
+
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
 const ChartNine: React.FC = () => {
   const [series, setSeries] = useState([

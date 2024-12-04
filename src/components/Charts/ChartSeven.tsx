@@ -254,9 +254,9 @@ const ChartOne: React.FC = () => {
           </h4>
         </div>
         <div className="flex items-center gap-2.5">
-          <p className="font-medium uppercase text-dark dark:text-dark-6">
+          {/* <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
-          </p>
+          </p> */}
           <SelectOption
             options={optionsSolar}
             selectedOption={selectedOption}
@@ -278,13 +278,13 @@ const ChartOne: React.FC = () => {
 
       <div className="flex flex-col gap-2 text-center xsm:flex-row xsm:gap-0">
         <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
-          <p className="font-medium">Current </p>
+          <p className="font-medium">Current  Production</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
             {solarData[solarData.length - 4]?.total_power.toFixed(1) || 0}W
           </h4>
         </div>
         <div className="xsm:w-1/2">
-          <p className="font-medium">Total</p>
+          <p className="font-medium">Total Production</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
             {solarData
               .reduce((acc, curr) => acc + curr.total_power, 0)

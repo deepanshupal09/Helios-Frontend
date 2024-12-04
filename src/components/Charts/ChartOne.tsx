@@ -230,9 +230,9 @@ const ChartOne: React.FC = () => {
           </h4>
         </div>
         <div className="flex items-center gap-2.5">
-          <p className="font-medium uppercase text-dark dark:text-dark-6">
+          {/* <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
-          </p>
+          </p> */}
           <DefaultSelectOption options={["Hourly"]} />
         </div>
       </div>
@@ -251,13 +251,13 @@ const ChartOne: React.FC = () => {
         <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
           <p className="font-medium">Current Rate</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            ₹{currPrice}/kWhr
+            {currPrice} / kWhr
           </h4>
         </div>
         <div className="xsm:w-1/2">
           <p className="font-medium">Forecasted Rate</p>
           <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            ₹{prePrice}/kWhr
+            {prePrice} / kWhr
           </h4>
         </div>
       </div>

@@ -1,10 +1,15 @@
 import { ApexOptions } from "apexcharts";
 import React, { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts";
 import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 import { getAuth } from "../../../actions/cookie";
 import { parseJwt } from "../../../actions/utils";
 import { fetchConsumptionPrediction } from "../../../actions/api";
+import dynamic from "next/dynamic";
+
+
+const ReactApexChart = dynamic(() => import("react-apexcharts"), {
+  ssr: false,
+});
 
 const ChartTen: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
@@ -235,9 +240,9 @@ const ChartTen: React.FC = () => {
           </h4>
         </div>
         <div className="flex items-center gap-2.5">
-          <p className="font-medium uppercase text-dark dark:text-dark-6">
+          {/* <p className="font-medium uppercase text-dark dark:text-dark-6">
             Sort by:
-          </p>
+          </p> */}
           <DefaultSelectOption options={["Hourly",]} />
         </div>
       </div>
